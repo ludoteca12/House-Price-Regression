@@ -5,7 +5,7 @@ This project predicts housing prices using the Ames Housing Dataset from the Kag
 It showcases a complete end-to-end machine learning workflow, including:
 - Exploratory Data Analysis (EDA)
 - Feature preprocessing using Scikit-Learn Pipelines
-- Model training with XGBoost and log-transformed targets
+- Model training with log-transformed targets
 - Cross‑validation for evaluation
 - Kaggle‑ready submission generation
 
@@ -39,23 +39,23 @@ House-Prices--regression-
 Since this project used manually exported images, all visualizations are stored in folders:
 
 ### 🔥 Heatmaps  
-Correlation heatmaps stored under `heatMap/` highlight the strongest predictors of **SalePrice**, including:
+Correlation heatmaps highlight the strongest predictors of **SalePrice**, including:
 - OverallQual  
 - GrLivArea  
 - GarageCars  
 - TotalBsmtSF  
 
-### 📈 Histograms  
-Key distribution stored under `histPlot/` showcase skewed variables such as:
+### 📈 Histogram  
+Key distribution showcase skewed variable such as:
 - SalePrice  
 
 ### 📉 Scatterplots  
-Saved under `scatterPlots/`, showing relationships such as:
+Showing relationships such as:
 - SalePrice vs. GrLivArea  
 - SalePrice vs. TotalBsmtSF  
 
 ### 📦 Boxplots  
-Stored in `boxPlots/`, used to inspect outliers across:
+Used to inspect outliers across:
 - Neighborhood  
 - HouseStyle  
 - OverallQual  
@@ -68,8 +68,7 @@ All preprocessing is performed using **Scikit‑Learn Pipelines** with:
 - **Median** imputation for numerical columns  
 - **Most frequent** imputation for categorical columns  
 - **StandardScaler** for numerical features  
-- **OneHotEncoder** for categorical features where features is orderless 
-- **OrdinalEncoder** for categorical features where features have an order
+- **OneHotEncoder** for categorical features 
 - **ColumnTransformer** to combine both pipelines  
 - **TransformedTargetRegressor** with `log1p` to reduce SalePrice skew  
 
