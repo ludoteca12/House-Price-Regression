@@ -8,17 +8,66 @@ This project includes EDA, preprocessing, baseline models, stacking, and a final
 
 ## 📊 Exploratory Data Analysis (EDA)
 
-### Scatter Plot Example
-![Scatter Plot](assets/graphs/scatterPlots/GarageArea.png)
+A comprehensive exploratory analysis was performed to understand the structure of the dataset and identify patterns relevant to predicting house prices. The following steps summarize the EDA insights without relying on images:
 
-### Box Plot Example
-![Box Plot](assets/graphs/boxPlots/GarageCond.png)
+1. Distribution Analysis
 
-### Histogram Example
-![SalePrice Histogram](assets/graphs/histPlot/SalePriceHist2.png)
+Key numerical variables such as SalePrice, GrLivArea, TotalSF, and LotArea were inspected for distribution shape.
 
-### Correlation Heatmap
-![Correlation Heatmap](assets/graphs/heatMap/heatmap.png)
+SalePrice showed right-skewness, which motivated a log transformation.
+
+Several predictors also exhibited skewed distributions, influencing the choice of scaling and transformation strategies.
+
+2. Outlier Detection
+
+Scatter plots and numerical summaries revealed several extreme outliers, particularly in:
+
+Above-ground living area (GrLivArea)
+
+Basement area (TotalBsmtSF)
+
+Lot size metrics
+
+Outliers that clearly deviated from the natural cluster of values were removed to stabilize model variance.
+
+3. Categorical Feature Insights
+
+Categorical variables such as:
+
+OverallQual
+
+Neighborhood
+
+KitchenQual
+
+GarageCond
+
+were analyzed using group statistics and value counts. Many of these showed clear relationships with SalePrice, confirming their importance.
+
+4. Correlation Investigation
+
+A correlation matrix was analyzed to understand linear relationships between numerical variables and the target.
+Key findings:
+
+OverallQual had one of the strongest positive correlations with SalePrice.
+
+Total surface-related features (TotalSF, GrLivArea, TotalBath) also correlated strongly.
+
+Some features such as GarageArea and GarageCars were redundant, leading to selective dropping.
+
+5. Missing Value Assessment
+
+A missing-value audit revealed:
+
+Some features had minimal missingness and were suitable for imputation.
+
+Others had extremely high missingness (e.g., PoolQC, MiscFeature), providing little predictive value and were removed.
+
+6. Feature Behavior Observations
+
+Certain ordinal variables required special handling due to non-linear patterns (e.g., condition and quality ratings).
+
+Some categorical features showed strong price separation across categories, confirming their predictive relevance.
 
 ---
 
@@ -88,10 +137,6 @@ submission.csv
 ├── train.csv
 ├── test.csv
 ├── submission.csv
-├── GarageArea.png
-├── GarageCond.png
-├── heatmap.png
-├── SalePriceHist2.png
 └── README.md
 ```
 
@@ -117,31 +162,6 @@ submission.csv
 
 ---
 
-## 🗺️ Project Setup Diagram
-
-```mermaid
-flowchart TD
-
-    A[📥 Raw Data<br>(train.csv & test.csv)] --> B[🔎 EDA<br>Scatter · Hist · Box · Heatmap]
-    B --> C[🧼 Data Cleaning<br>Outliers · Missing · Drops]
-    C --> D[🧩 Feature Engineering<br>TotalSF · TotalBath · HouseAge]
-    D --> E[⚙️ Preprocessing Pipeline<br>Numeric + Categorical]
-    E --> F[🤖 Baseline Models<br>Ridge · RF · XGBoost]
-    F --> G[🧱 Stacking Ensemble<br>Meta: Ridge]
-    G --> H[📤 Predictions<br>submission.csv]
-
-    style A fill:#dae8fc,stroke:#6c8ebf
-    style B fill:#ffe6cc,stroke:#d79b00
-    style C fill:#f8cecc,stroke:#b85450
-    style D fill:#e1d5e7,stroke:#9673a6
-    style E fill:#d5e8d4,stroke:#82b366
-    style F fill:#fff2cc,stroke:#d6b656
-    style G fill:#f5f5f5,stroke:#999999
-    style H fill:#cfe2f3,stroke:#6fa8dc
-```
-
----
-
 ## ▶️ How to Run This Project
 
 ### **1. Install dependencies**
@@ -163,14 +183,6 @@ The notebook will automatically create:
 submission.csv
 ```
 You can upload this file to Kaggle for scoring.
-
----
-
-## 🚀 Future Improvements
-
-- Hyperparameter tuning with Optuna  
-- GitHub Actions for notebook execution & HTML export  
-- SHAP interpretability
 
 ---
 
