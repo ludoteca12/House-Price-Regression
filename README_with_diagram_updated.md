@@ -6,6 +6,7 @@ This project includes EDA, preprocessing, baseline models, stacking, and a final
 
 ---
 
+
 ## 📊 Exploratory Data Analysis (EDA)
 
 A comprehensive exploratory analysis was performed to understand the structure of the dataset and identify patterns relevant to predicting house prices. The following steps summarize the EDA insights without relying on images:
@@ -48,8 +49,8 @@ A missing-value audit revealed:
 - Certain ordinal variables required special handling due to non-linear patterns.  
 - Some categorical features showed strong price separation across categories, confirming their predictive relevance.
 
----
 
+## 
 ## 🧼 Data Cleaning & Preprocessing
 
 - Removal of extreme outliers
@@ -63,13 +64,11 @@ Preprocessing is handled using **ColumnTransformer** with:
 
 ---
 
-## 🤖 Models Implemented
+## 🤖 Models Implemented (Default Parameters)
 
 - **Ridge Regression**
 - **RandomForestRegressor**
 - **XGBoostRegressor**
-- **LightGBM**
-- **CatBoost**
 
 All models wrapped in:
 ```
@@ -84,9 +83,7 @@ A stacking regressor combining:
 
 - Ridge  
 - RandomForest  
-- XGBoost
-- LightGBM
-- CatBoost
+- XGBoost  
 
 with **Ridge** as the meta-learner.
 
@@ -116,6 +113,10 @@ submission.csv
 ├── train.csv
 ├── test.csv
 ├── submission.csv
+├── GarageArea.png
+├── GarageCond.png
+├── heatmap.png
+├── SalePriceHist2.png
 └── README.md
 ```
 
@@ -141,6 +142,39 @@ submission.csv
 
 ---
 
+
+
+---
+
+
+
+---
+
+## 🗺️ Project Setup Diagram
+
+```mermaid
+flowchart TD
+
+    A[📥 Raw Data<br>(train.csv & test.csv)] --> B[🔎 EDA<br>Scatter · Hist · Box · Heatmap]
+    B --> C[🧼 Data Cleaning<br>Outliers · Missing · Drops]
+    C --> D[🧩 Feature Engineering<br>TotalSF · TotalBath · HouseAge]
+    D --> E[⚙️ Preprocessing Pipeline<br>Numeric + Categorical]
+    E --> F[🤖 Baseline Models<br>Ridge · RF · XGBoost]
+    F --> G[🧱 Stacking Ensemble<br>Meta: Ridge]
+    G --> H[📤 Predictions<br>submission.csv]
+
+    style A fill:#dae8fc,stroke:#6c8ebf
+    style B fill:#ffe6cc,stroke:#d79b00
+    style C fill:#f8cecc,stroke:#b85450
+    style D fill:#e1d5e7,stroke:#9673a6
+    style E fill:#d5e8d4,stroke:#82b366
+    style F fill:#fff2cc,stroke:#d6b656
+    style G fill:#f5f5f5,stroke:#999999
+    style H fill:#cfe2f3,stroke:#6fa8dc
+```
+
+---
+
 ## ▶️ How to Run This Project
 
 ### **1. Install dependencies**
@@ -161,11 +195,6 @@ The notebook will automatically create:
 ```
 submission.csv
 ```
+You can upload this file to Kaggle for scoring.
 
 ---
-
-## 📬 Contact
-If you'd like to discuss the project, collaborate, or see more of my work:
-
-**Author:** Mateus Vieira Vasconcelos  
-**GitHub:** https://github.com/ludoteca12
