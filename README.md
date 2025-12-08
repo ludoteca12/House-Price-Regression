@@ -1,171 +1,167 @@
 
-# 🏠 House Prices Prediction — Regression Project
+# 🏡 House Price Regression — Kaggle Competition 
 
-A complete end-to-end machine learning workflow applied to the **Kaggle House Prices** dataset.  
-This project includes EDA, preprocessing, baseline models, stacking, and a final Kaggle-ready submission.
 
----
-
-## 📊 Exploratory Data Analysis (EDA)
-
-A comprehensive exploratory analysis was performed to understand the structure of the dataset and identify patterns relevant to predicting house prices. The following steps summarize the EDA insights without relying on images:
-
-### 1. Distribution Analysis
-Key numerical variables such as `SalePrice`, `GrLivArea`, `TotalSF`, and `LotArea` were inspected for distribution shape.  
-- `SalePrice` showed right-skewness, which motivated a log transformation.  
-- Several predictors also exhibited skewed distributions, influencing the choice of scaling and transformation strategies.
-
-### 2. Outlier Detection
-Scatter plots and numerical summaries revealed several extreme outliers, particularly in:
-- Above-ground living area (`GrLivArea`)
-- Basement area (`TotalBsmtSF`)
-- Lot size metrics
-
-Outliers that clearly deviated from the natural cluster of values were removed to stabilize model variance.
-
-### 3. Categorical Feature Insights
-Categorical variables such as:
-- `OverallQual`
-- `Neighborhood`
-- `KitchenQual`
-- `GarageCond`
-
-were analyzed using group statistics and value counts. Many of these showed clear relationships with `SalePrice`, confirming their importance.
-
-### 4. Correlation Investigation
-A correlation matrix was analyzed to understand linear relationships between numerical variables and the target.  
-Key findings:
-- **OverallQual** had one of the strongest positive correlations with `SalePrice`.  
-- Total surface-related features (`TotalSF`, `GrLivArea`, `TotalBath`) also correlated strongly.  
-- Some features such as `GarageArea` and `GarageCars` were redundant, leading to selective dropping.
-
-### 5. Missing Value Assessment
-A missing-value audit revealed:
-- Some features had minimal missingness and were suitable for imputation.  
-- Others had extremely high missingness (e.g., `PoolQC`, `MiscFeature`), providing little predictive value and were removed.
-
-### 6. Feature Behavior Observations
-- Certain ordinal variables required special handling due to non-linear patterns.  
-- Some categorical features showed strong price separation across categories, confirming their predictive relevance.
+## 🔑 Summary
+This project is a Kaggle-style regression workflow to predict house sale prices. It follows a notebook-first approach (EDA → Feature Engineering → Modeling → Evaluation → Submission) and combines feature engineering, robust preprocessing, and stacked models. The final model is a **StackingRegressor** (stacked ensemble) with a cross-validated **RMSE = 19,292.2378** and a Kaggle public leaderboard score of **0.12730 (RMSLE)**.
 
 ---
 
-## 🧼 Data Cleaning & Preprocessing
-
-- Removal of extreme outliers
-- Cleaning of missing values
-- Feature dropping based on correlation and redundancy
-- Feature engineering (`TotalSF`, `TotalBath`, `HouseAge`, etc.)
-
-Preprocessing is handled using **ColumnTransformer** with:
-- StandardScaler for numerical features
-- OneHotEncoder for categorical features
+## 📌 Objective
+Predict the final sale price of houses using structured tabular features. The evaluation metric used is **Root Mean Squared Error (RMSE)** for local validation and **RMSLE** for Kaggle submissions (score reported above).
 
 ---
 
-## 🤖 Models Implemented
+## 📊 Data & Where to find it
+- **Train / Test source:** Kaggle dataset (House Prices - Advanced Regression Techniques)
+- Typical files: `train.csv`, `test.csv`, `sample_submission.csv`
+- Rows & features: dataset contains 37 numerical and 43 categorical features related to house structure, quality and sale details.
 
-- **Ridge Regression**
-- **RandomForestRegressor**
-- **XGBoostRegressor**
-- **LightGBM**
-- **CatBoost**
+---
 
-All models wrapped in:
+## 🧭 Project Structure (notebook-style)
 ```
-TransformedTargetRegressor(func=log1p, inverse_func=expm1)
-```
-
----
-
-## 🏆 Stacked Ensemble
-
-A stacking regressor combining:
-
-- Ridge  
-- RandomForest  
-- XGBoost
-- LightGBM
-- CatBoost
-
-with **Ridge** as the meta-learner.
-
----
-
-## 🧪 Model Evaluation
-
-Evaluation performed using **5-fold cross-validation** with **RMSE**.
-
----
-
-## 📤 Final Submission
-
-Final Kaggle-ready predictions saved as:
-
-```
-submission.csv
-```
-
----
-
-## 📁 Project Structure
-
-```
-📦 House-Price-Prediction/
-├── house_price_prediction.ipynb
-├── train.csv
-├── test.csv
+project_root/
+├── house_price_prediction.ipynb  
+├── test.csv 
+├── train.csv 
 ├── submission.csv
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 📚 What I Learned
+## 🧩 Feature Engineering 
+The following columns were dropped due to many missing values:
 
-- How to conduct structured EDA  
-- Detect and handle outliers  
-- Build preprocessing pipelines  
-- Compare regression models  
-- Use stacking to improve predictions  
-- Build a complete ML pipeline from data to submission  
+```python
+['PoolQC', 'MiscFeature', 'Alley', 'Fence', 'GarageYrBlt', 'GarageCond', 'BsmtFinType2']
+```
+
+New features created (and applied to both train and test):
+
+```python
+# Age and remodel-derived features
+HouseAge = YrSold - YearBuilt
+HouseRemodelAge = YrSold - YearRemodAdd
+
+# Areas and totals
+TotalSF = 1stFlrSF + 2ndFlrSF + BsmtFinSF1 + BsmtFinSF2
+TotalArea = GrLivArea + TotalBsmtSF
+
+# Bathrooms aggregated
+TotalBaths = BsmtFullBath + FullBath + 0.5 * (BsmtHalfBath + HalfBath)
+
+# Porch / outdoor areas aggregated
+TotalPorchSF = OpenPorchSF + 3SsnPorch + EnclosedPorch + ScreenPorch + WoodDeckSF
+```
+
+After creating aggregates, original columns used to compute them were removed to avoid redundancy:
+
+```python
+# Dropped columns (examples)
+['YrSold', 'YearBuilt', 'YearRemodAdd', '1stFlrSF', '2ndFlrSF', 'BsmtFinSF1', 'BsmtFinSF2',
+ 'GrLivArea', 'TotalBsmtSF', 'BsmtFullBath', 'FullBath', 'BsmtHalfBath', 'HalfBath',
+ 'OpenPorchSF', '3SsnPorch', 'EnclosedPorch', 'ScreenPorch', 'WoodDeckSF']
+```
+
+These transformations stabilize variance, reduce dimensionality and encode aggregated signals (size, age, amenities).
 
 ---
 
-## 🚀 Future Improvements
+## ⚙️ Preprocessing & Pipelines
 
-- Hyperparameter tuning (Optuna)
-- Advanced stacking/blending
-- SHAP interpretability
-- Feature engineering expansion
+The dataset was split into `X` and `y` and processed using a **ColumnTransformer** with two pipelines:
+
+**Numeric pipeline**:
+- `SimpleImputer(strategy='median')`
+- `StandardScaler()`
+
+**Categorical pipeline**:
+- `SimpleImputer(strategy='most_frequent')`
+- `OneHotEncoder(handle_unknown='ignore', sparse_output=False)`
+
+Example snippet:
+
+```python
+num_pipe = Pipeline([('imputer', SimpleImputer(strategy='median')), ('scaler', StandardScaler())])
+cat_pipe = Pipeline([('imputer', SimpleImputer(strategy='most_frequent')), ('ohe', OneHotEncoder(handle_unknown='ignore', sparse_output=False))])
+preprocessor = ColumnTransformer([('num', num_pipe, num_cols), ('cat', cat_pipe, cat_cols)])
+```
+
+**Target transformation**:
+All models were trained using `TransformedTargetRegressor(func=np.log1p, inverse_func=np.expm1)` to stabilize skewness in `SalePrice` and improve RMSE.
 
 ---
 
-## ▶️ How to Run This Project
+## 🧪 Models & Final Stack
+Several regressors were trained and compared (examples):
 
-### **1. Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+- Linear models (Ridge, Lasso)  
+- Tree-based (RandomForest, GradientBoosting)  
+- Boosting libraries (XGBoost / LightGBM)  
+- Support Vector Regressor / KNN (baseline)  
 
-### **2. Open the notebook**
-```bash
-jupyter notebook house_price_prediction.ipynb
-```
-
-### **3. Run all cells**
-Make sure `train.csv` and `test.csv` are in the same directory as the notebook.
-
-### **4. Generate final predictions**
-The notebook will automatically create:
-```
-submission.csv
-```
+**Final model:** `StackingRegressor`   
+**Local validation metric:** `RMSE = 19,292.2378` 
+**Kaggle public leaderboard score:** `RMSLE = 0.12730` 
 
 ---
 
-## 📬 Contact
-If you'd like to discuss the project, collaborate, or see more of my work:
 
-**Author:** Mateus Vieira Vasconcelos  
-**GitHub:** https://github.com/ludoteca12
+## 🔎 Model Performance & Metrics
+
+Local cross-validated performance reported as RMSE:
+- **RMSE (mean cv)**: **19,292.2378**
+
+Kaggle submission:
+- **RMSLE (public)**: **0.12730**
+
+---
+
+## 💡 Key Takeaways (EDA & Engineering insights)
+
+- **OverallQual and GrLivArea/TotalArea** are among the strongest predictors of SalePrice.  
+- **Feature engineering** (TotalSF, TotalArea, TotalBaths, TotalPorchSF) improved model stability and lowered RMSE versus single raw features.  
+- **Target transformation (log1p)** was essential to reduce skewness and stabilize model errors.  
+- **Missing-value-heavy columns** (e.g., PoolQC, Alley) were removed because their imputation would add noise.  
+- **Outliers in living area** significantly affect simple linear models; ensemble methods handle them better.  
+- **One-hot encoding** increased dimensionality but allowed tree/boosting models to capture categorical effects.  
+
+---
+
+## 🧾 Lessons Learned
+
+- Aggregating related features into meaningful totals often yields stronger predictive signals than keeping raw components.  
+- Using a target transformation (log) with `TransformedTargetRegressor` reliably improves RMSE for highly skewed targets.  
+- Stacking diverse learners (trees + linear) reduces variance and produces a better generalization on leaderboard metrics.  
+- Careful handling of missing values and categorical encoding is crucial for real-world tabular data.  
+- Visual inspections (boxplots, scatterplots) are still invaluable — automated pipelines should complement, not replace, manual EDA.
+
+---
+
+## 📦 How to run (quick)
+
+1. Clone the repo: `git clone <repo-url>`  
+2. Create environment: `conda create -n house python=3.10 && conda activate house`  
+3. Install dependencies: `pip install -r requirements.txt`  
+4. Open notebook `house_price_prediction.ipynb` and run all cells.  
+
+---
+
+## 🔭 Next steps / Improvements
+
+- Create a robust pipeline for feature selection and model versioning (MLflow)  
+- Implement target encoding / frequency encoding for high-cardinality categoricals  
+- Hyperparameter optimization with Optuna or Bayesian search  
+- Build a small inference API for model serving (FastAPI + Docker)  
+
+---
+
+## 👨‍💻 Author
+
+Mateus Vieira Vasconcelos  
+Data Analysis & Machine Learning Enthusiast
+
+---
